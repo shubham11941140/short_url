@@ -16,9 +16,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Databases
 var con = mysql.createConnection({
-  host: "localhost",
-  user: "Ark", //DB
-  password: "", //DB
+  host: "database-2.cqztcdymd18c.us-east-1.rds.amazonaws.com",
+  user: "admin", //DB
+  password: "shubhamgupta1", //DB
   database: "URL",
 });
 con.connect(function (err) {
