@@ -12,4 +12,11 @@ and run the **performance.py** file. If you wish to edit the parameters for test
 python3 performance.py
 ```
 
+Do not use **Copy to Clipboard** as we are running this on a non secure cloud server as the SSH has not been established.
+
+The Clipboard functionality works only in a secure environment which we will create as the project moves on
+
+Refer to: **https://stackoverflow.com/questions/52054635/copy-clipboard-function-working-locally-but-not-working-server** for more details.
+
+
 
