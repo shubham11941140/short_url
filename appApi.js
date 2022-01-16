@@ -146,7 +146,8 @@ app.post('/api/readshorten/:apiKey', function (req, res) {
     //Using Cache
     if(myCacheMap.has(link)){
       // console.log();
-      res.redirect(myCacheMap.get(link));
+      // res.redirect(myCacheMap.get(link));
+      res.json({longURL:myCacheMap.get(link)});
       // console.log("Hit from cache");
       //Update redirection count
       let sqlupdate = `UPDATE urlMap SET num_of_redirections = num_of_redirections + 1 where  shortenedurl = "${link}";`;
