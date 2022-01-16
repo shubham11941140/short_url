@@ -183,6 +183,61 @@ app.post('/api/readshorten/:apiKey', function (req, res) {
     });
 });
 
+//Delete URL
+app.post('/api/deleteurl/:apiKey', function (req, res) {
+  // create user in req.body
+  let Email=validateAPIkey(req.params.apiKey);
+    if(Email=="F"){
+        res.send("API key Invalid");
+        return;
+    }
+  // console.log(req.params.shorturl);
+  let data = " ";
+
+  //**********************************To Upadate this LINk************************* /
+  link = req.body.shorturl;
+  if(link==undefined){
+    res.send("Can't Read URL");
+    return;
+  }
+  //check user has right over URl
+  
+  
+    let sql = `SELECT email,url,ttl,creation_timestamp from urlMap where shortenedurl = "${link}" ; `;
+    con.query(sql, data, (err, result) => {
+    if (err) {
+      res.send("Something Went Wrong... Try Again...")
+      return ;
+    }
+    if(result.length==0){
+      res.send("No URL for this ShortURL exits");
+      return;
+    }
+    // res.json({longURL:result[0].url});
+    // halfMyCacheMap();
+    // myCacheMap.set(link,result[0].url);
+    if(result[0].email==Email){
+      let sqldel = `DELETE from urlMap  where  shortenedurl = "${link}";`;
+    let query = con.query(sqldel, data, (err, result) => {
+      if (err) {
+      //   console.log("Increment failed in redirection counts");
+        return;
+      }
+      res.send("Delete Successful");
+    });
+    }
+    else{
+      res.send("Not enough permission");
+      return;
+    }
+    
+  });
+  //Using Cache
+  if(myCacheMap.has(link)){
+    myCacheMap.delete(link);
+  }
+});
+
 // //Give Link of short URL
 
 /*
@@ -261,4 +316,19 @@ function validateAPIkey(apiKey){
         }
         return result[0].email;
     });
+}
+
+
+function halfMyCacheMap(){
+  if(myCacheMap.size>3000000){
+    let cnt=0;
+    //Can also Implement it
+    myCacheMap.clear();
+  //   for (const [key, value] of myCacheMap.entries()) {
+  //       myMap.delete(key);
+  //       cnt++;
+  //       if(cnt>=1500000)
+  //         break;
+  //   }
+  }
 }
