@@ -33,6 +33,8 @@ It will be the API_KEY to verify the user authenticity - Can be entered as a nor
 **3rd Argument:**
 It will contain the website.
 
+Enter the website enclosed in double quotes(" ") which will not cause parsing error
+
 ```
 To Read -> Short URL string will be entered
 To Delete -> Short URL string will be entered
