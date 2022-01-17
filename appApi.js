@@ -16,9 +16,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Databases
 var con = mysql.createConnection({
-  host: "database-2.cqztcdymd18c.us-east-1.rds.amazonaws.com",
-  user: "admin", //DB
-  password: "shubhamgupta1", //DB
+  host: "localhost",
+  user: "Ark", //DB
+  password: "Ahmad.11", //DB
   database: "URL",
 });
 con.connect(function (err) {
@@ -34,50 +34,67 @@ con.connect(function (err) {
 
 app.post('/api/createshorten/:apiKey', async function (req, res) {
   // create user in req.body
-  let Email = await validateAPIkey(req.params.apiKey);
-  if (Email == "F") {
-    res.send("API key Invalid");
-    return;
-  }
-  else {
-
-
-    // console.log(req.body);
-    // res.send("OK Test");
-    // return;
-    let sql = "INSERT Into urlMap Set ?";
-    let url1 = await makeid();
-    let longurl = req.body.urldata;
-    let timestamp = new Date();
-    let data = {
-      email: Email,
-      url: longurl,
-      shortenedurl: url1,
-      creation_timestamp: timestamp
-    };
-    let query = con.query(sql, data, (err, result) => {
-      if (err) {
-        res.send("Something Went Wrong... Try Again...")
-        // console.log(err);
+  
+let apiKey=req.params.apiKey;
+let sqlapi = `SELECT email from emailAPIKeys where apikey = "${apiKey}" ; `;
+let dataapi=" ";
+con.query(sqlapi, dataapi, (err, result) => {
+    if (err) {
+      console.log("Something Went Wrong... Try Again...");
+      res.send("Please Try again");
+    }
+    else if(result.length==0){
+      console.log("API Key Invalid");
+      res.send("API key not valid");
+    }
+    else{
+      Email=result[0].email;
+      let sql = "INSERT Into urlMap Set ?";
+      let url1 =  makeid();
+      let longurl = req.body.urldata;
+      if(longurl==undefined){
+        res.send("Provide URL"+longurl);
         return;
       }
-      //   res.render("shortURLResponse", { shorturl: url1 });
-      res.json({ shorturl: url1 });
-    });
-  }
+      let timestamp = new Date();
+      let data = {
+        email: Email,
+        url: longurl,
+        shortenedurl: url1,
+        creation_timestamp: timestamp
+      };
+      let query = con.query(sql, data, (err, result) => {
+        if (err) {
+          res.send("Something Went Wrong... Try Again...")
+          // console.log(err);
+          return;
+        }
+        //   res.render("shortURLResponse", { shorturl: url1 });
+        res.json({ shorturl: url1 });
+      });
+    }   
+});
 });
 // Create Custom Short URL
 app.post('/api/createcustomshorten/:apiKey', async function (req, res) {
   // create user in req.body
-  let Email = await validateAPIkey(req.params.apiKey);
-  if (Email == "F") {
-    res.send("API key Invalid");
-    return;
-  }
-  // 
-  else {
-
-    let Url = req.body.longurldata;
+  
+let apiKey=req.params.apiKey;
+let sqlapi = `SELECT email from emailAPIKeys where apikey = "${apiKey}" ; `;
+let dataapi=" ";
+con.query(sqlapi, dataapi, (err, result) => {
+    if (err) {
+      console.log("Something Went Wrong... Try Again...");
+      res.send("Please Try again");
+    }
+    else if(result.length==0){
+      console.log("API Key Invalid");
+      res.send("API key not valid");
+    }
+    else{
+      Email=result[0].email;
+      
+      let Url = req.body.longurldata;
     let customurl = req.body.customurldata;
     let TTL = req.body.ttl;
     // console.log("Now",req.body.email);
@@ -103,48 +120,59 @@ app.post('/api/createcustomshorten/:apiKey', async function (req, res) {
     };
 
 
-
-    let sqlsearch = `SELECT * from urlMap where  shortenedurl = "${customurl}" ;`;
-    let datasearch = " ";
-    con.query(sqlsearch, datasearch, (err, result) => {
-      if (err) {
-        res.send("Something Went Wrong... Try Again...")
-        console.log(err);
-        return;
-      }
-      if (result.length == 0) {
-        let query = con.query(sqlinsert, datainsert, (err, result) => {
-          if (err) {
-            res.send("Something Went Wrong... Try Again...")
-            console.log(err);
-            return;
-          }
-          data = " ";
-          //   res.render("premiumShortURLResponse", { shorturl: customurl });
-          res.json({ shorturl: customurl });
-        });
-      } else {
-        res.send(`Try with other URL, This short Url already exits`);
-      }
-    });
-  }
+      let sqlsearch = `SELECT * from urlMap where  shortenedurl = "${customurl}" ;`;
+      let datasearch = " ";
+      con.query(sqlsearch, datasearch, (err, result) => {
+        if (err) {
+          res.send("Something Went Wrong... Try Again...")
+          console.log(err);
+          return;
+        }
+        if (result.length == 0) {
+          let query = con.query(sqlinsert, datainsert, (err, result) => {
+            if (err) {
+              res.send("Something Went Wrong... Try Again...")
+              console.log(err);
+              return;
+            }
+            data = " ";
+            //   res.render("premiumShortURLResponse", { shorturl: customurl });
+            res.json({ shorturl: customurl });
+          });
+        } else {
+          res.send(`Try with other URL, This short Url already exits`);
+        }
+      });
+    }   
+});
+ 
 });
 
 // Read Normal Short URL
-app.post('/api/readshorten/:apiKey', function (req, res) {
+app.post('/api/readshorten/:apiKey', async function (req, res) {
   // create user in req.body
-  let Email = await validateAPIkey(req.params.apiKey);
-  if (Email == "F") {
-    res.send("API key Invalid");
-    return;
-  }
-  else {
-    // console.log(req.params.shorturl);
-    let data = " ";
+
+let apiKey=req.params.apiKey;
+let sqlapi = `SELECT email from emailAPIKeys where apikey = "${apiKey}" ; `;
+let dataapi=" ";
+con.query(sqlapi, dataapi, (err, result) => {
+    if (err) {
+      console.log("Something Went Wrong... Try Again...");
+      res.send("Please Try again");
+    }
+    else if(result.length==0){
+      console.log("API Key Invalid");
+      res.send("API key not valid");
+    }
+    else{
+      Email=result[0].email;
+      let data = " ";
 
 
-    //**********************************To Upadate this LINk************************* /
+//     //**********************************To Upadate this LINk************************* /
     link = req.body.shorturl;
+    // res.send(link);
+    // return;
     if (link == undefined) {
       res.send("Can't Read URL");
       return;
@@ -155,7 +183,7 @@ app.post('/api/readshorten/:apiKey', function (req, res) {
       // console.log();
       // res.redirect(myCacheMap.get(link));
       res.json({ longURL: myCacheMap.get(link) });
-      // console.log("Hit from cache");
+      console.log("Hit from cache");
       //Update redirection count
       let sqlupdate = `UPDATE urlMap SET num_of_redirections = num_of_redirections + 1 where  shortenedurl = "${link}";`;
       let query = con.query(sqlupdate, data, (err, result) => {
@@ -193,66 +221,76 @@ app.post('/api/readshorten/:apiKey', function (req, res) {
         }
       });
     }
-  }
+    }   
+});
 });
 
 //Delete URL
-app.post('/api/deleteurl/:apiKey', function (req, res) {
+app.post('/api/deleteurl/:apiKey', async function (req, res) {
   // create user in req.body
-  let Email = await validateAPIkey(req.params.apiKey);
-  if (Email == "F") {
-    res.send("API key Invalid");
-    return;
-  }
-  else {
-    // console.log(req.params.shorturl);
-    let data = " ";
-
-    //**********************************To Upadate this LINk************************* /
-    link = req.body.shorturl;
-    if (link == undefined) {
-      res.send("Can't Read URL");
-      return;
+  
+let apiKey=req.params.apiKey;
+let sqlapi = `SELECT email from emailAPIKeys where apikey = "${apiKey}" ; `;
+let dataapi=" ";
+con.query(sqlapi, dataapi, (err, result) => {
+    if (err) {
+      console.log("Something Went Wrong... Try Again...");
+      res.send("Please Try again");
     }
-    else {
-      //check user has right over URl
+    else if(result.length==0){
+      console.log("API Key Invalid");
+      res.send("API key not valid");
+    }
+    else{
+      Email=result[0].email;
+      let data = " ";
 
-
-      let sql = `SELECT email,url,ttl,creation_timestamp from urlMap where shortenedurl = "${link}" ; `;
-      con.query(sql, data, (err, result) => {
-        if (err) {
-          res.send("Something Went Wrong... Try Again...")
-          return;
-        }
-        if (result.length == 0) {
-          res.send("No URL for this ShortURL exits");
-          return;
-        }
-        // res.json({longURL:result[0].url});
-        // halfMyCacheMap();
-        // myCacheMap.set(link,result[0].url);
-        if (result[0].email == Email) {
-          let sqldel = `DELETE from urlMap  where  shortenedurl = "${link}";`;
-          let query = con.query(sqldel, data, (err, result) => {
-            if (err) {
-              //   console.log("Increment failed in redirection counts");
-              return;
-            }
-            res.send("Delete Successful");
-          });
-        }
-        else {
-          res.send("Not enough permission");
-          return;
-        }
-
-      });
-      //Using Cache
-      if (myCacheMap.has(link)) {
-        myCacheMap.delete(link);
+      //**********************************To Upadate this LINk************************* /
+      link = req.body.shorturl;
+      if (link == undefined) {
+        res.send("Can't Read URL");
+        return;
       }
-    }
-  }
+      else {
+        //check user has right over URl
+  
+  
+        let sql = `SELECT email,url,ttl,creation_timestamp from urlMap where shortenedurl = "${link}" ; `;
+        con.query(sql, data, (err, result) => {
+          if (err) {
+            res.send("Something Went Wrong... Try Again...")
+            return;
+          }
+          if (result.length == 0) {
+            res.send("No URL for this ShortURL exits");
+            return;
+          }
+          // res.json({longURL:result[0].url});
+          // halfMyCacheMap();
+          // myCacheMap.set(link,result[0].url);
+          if (result[0].email == Email) {
+            let sqldel = `DELETE from urlMap  where  shortenedurl = "${link}";`;
+            let query = con.query(sqldel, data, (err, result) => {
+              if (err) {
+                //   console.log("Increment failed in redirection counts");
+                return;
+              }
+              res.send("Delete Successful");
+            });
+          }
+          else {
+            res.send("Not enough permission");
+            return;
+          }
+  
+        });
+        //Using Cache
+        if (myCacheMap.has(link)) {
+          myCacheMap.delete(link);
+        }
+      }
+    }   
+});
 });
 
 // //Give Link of short URL
@@ -299,11 +337,11 @@ app.post('/api/:apiKey', jsonParser, function (req, res) {
 */
 //UTILITY FUNCtion
 
-app.listen(3000, (e) => {
-  console.log(`listening on  API port 3000`);
+app.listen(7000, (e) => {
+  console.log(`listening on cloud API port 7000`);
 });
 
-async function makeid(/*length = 5*/) {
+ function makeid(/*length = 5*/) {
   var result = "";
   var characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -362,3 +400,4 @@ function halfMyCacheMap() {
     //   }
   }
 }
+
