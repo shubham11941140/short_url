@@ -14,16 +14,28 @@
 <body>
     <!-- <div id="home-page"> -->
 
+        
+        <!-- =========================== Main Heading ==================================================== -->
         <div id="main-heading"><h1>URL Shortener</h1></div>
+        
+        
+        <!-- ========================= Section for Non premium and Premium forms ============================= -->
         <div id="full-page" >
+            
+            <!-- Non Premium Section -->
             <div id="non-premium-section" >
+                
+                <!-- Heading for Non premium Section -->
                 <h1 id="non-premium-heading">Free tier</h1>
+                
                 <!-- <h2>Enter your URL :</h2> 
                 <form action="/nonpremiumurl" method="post">
                     <label for="url">Url</label> 
                     <input type="url" name="urldata" id="">
                     <button class="btn btn-primary" type="submit">Submit</button>
                 </form> -->
+                
+                <!-- Form for non premium section -->
                 <form class="forms" action="/nonpremiumurl" method="post">
                     <div class="form-group">
                       <label for="email">Enter your URL :</label>
@@ -31,15 +43,26 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Shorten</button>
                 </form>
+            
             </div>
+
+
+
+            <!-- Premium Section -->
             <div id="premium-section">
+                
+                <!-- Heading for Premium Section -->
                 <h1 id="premium-heading">Premium User</h1>
+
+                <!-- Form for Premium section -->
                 <form class="forms" action='/nonpremiumOTPverify' method="post">
+                    
                     <div class="form-group">
                         <label for="email">Enter your Email :</label>
                         <input class="inpemail form-control"type="email" name="email" id="premium-section-input" placeholder="Enter your email...">
                     </div>
 
+                    <!-- Form for OTP -->
                     <div class="otpdiv advancedHide">
                         <!-- <label for="email">Temp storing Email</label>
                         <input class="inpemail1"type="email" name="email" id=""> -->
@@ -49,23 +72,31 @@
                             <button class="btn btn-primary" type="submit">Submit OTP</button>
                         <!-- </form> -->
                     </div>
+
                     <button id="btnforemail" class="btn btn-primary " type="button">Submit Email</button>
 
                     
                 </form>
+
             </div>
+
         </div>
+
+
         <div id="graph">
             <canvas id="myChart" style="width:100%;"></canvas>
         </div>
+
+
     <!-- </div> -->
 
     <script src="homepage/index1.js"></script>
     <script>
 
-        let graphData = '<%-graphData%>';
+        let graphData = '<%-graphData%>'; // Receiving data for graph from server
         graphData = JSON.parse(graphData);
 
+        // Storing the data in arrays to show them on graph
         let curr_date = [] , read_count = [] , write_count = [];
         for(let i = 0; i < Math.min(graphData.length , 15) ; i++)
         {
@@ -75,6 +106,7 @@
         }
 
 
+        // Initaialing objects for the third party library
         var data = {
         labels: curr_date,
         datasets: [
@@ -91,6 +123,7 @@
         ],
         };
 
+        // Generating the chart
         new Chart("myChart", {
         type: "bar",
         data,
@@ -113,6 +146,7 @@
         },
         });
     </script>
+    
 </body>
 </html>
 

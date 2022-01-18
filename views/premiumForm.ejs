@@ -9,24 +9,38 @@
     <title>URL Shortener</title>
 </head>
 <body>
-    <div class="customurl">   
+
+    <!-- Custom URL form body -->
+    <div class="customurl">
+
         <h1>Custom URL Shortener</h1> 
+        
         <form action="/customurl" method="post">
+            
             <input style=" display: none;"type="email" name="email" id="" value="<%=email %>">
+            
             <label for="urldata">URL</label>
             <input type="url" name="urldata" id="">
+            
             <label for="customurldata">Custom String</label>
             <input type="string" name="customurldata" id="">
+            
             <label for="TTL">Duration (in days)</label>
             <input type="number" name="TTL" id="">
+            
             <!-- <label for="TTL">Phone Number</label>
             <input type="number" name="phonenum" id=""> -->
+            
             <button class="btn btn-primary" type="submit">Submit</button>
+
         </form>
+        
     </div>
 
 
+    <!-- Past History Table section -->
     <div id="past-history">
+
         <h2>Here is your past history :</h2>
 
         <table id="history-table">
@@ -39,17 +53,20 @@
             </tr>
         
         </table>
+
     </div>
 
 
 
     <script>
 
-        let tableData = '<%-data%>';
+        let tableData = '<%-data%>'; // Receiving data for table from server
         // console.log(JSON.parse(tableData).length);
 
         tableData = JSON.parse(tableData);
         let addedData = "";
+
+        // Adding rows in the html table for every entry in data returned from DB
         for(let i = 0; i < tableData.length ; i++)
         {
             addedData += "<tr>\
@@ -60,6 +77,7 @@
                 </tr>";
  
         }
+        // Setting up the inner html of table element to out generated data
 		document.getElementById('history-table').innerHTML += addedData;
 
     </script>

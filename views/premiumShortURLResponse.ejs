@@ -9,33 +9,49 @@
     <title>URL Shortener</title>
 </head>
 <body>
+    
+    <!-- Body for showing short url -->
     <div id="main-content">
+        
         <h2>Here is your short url :</h2>
+        
         <div id="text-area">
+            
             <!-- <input value="https://eshtsethsertjjt" readonly id="shorturl">
                 hello
             </input> -->
+            
             <a id="shorturl" href="http://ec2-54-173-198-224.compute-1.amazonaws.com:8000/<%=shorturl%>">http://ec2-54-173-198-224.compute-1.amazonaws.com:8000/<%=shorturl%></a>
+            
             <button class="btn btn-primary" onclick="copytoclipboard()" >Copy to clipboard</button>
+
         </div>
+        
         <!-- <a href="https://google.com">https://google.com</a> -->
+
     </div>
 
+    <!-- Past History Table section -->
     <div id="past-history">
+        
         <h2>Here is your past history :</h2>
 
         <table id="history-table">
-        <tr>
-            <th>URL</th>
-            <th>Shortened URL</th>
-            <th>Created At</th>
-            <th>Number of redirections</th>
-        </tr>
+            
+            <tr>
+                <th>URL</th>
+                <th>Shortened URL</th>
+                <th>Created At</th>
+                <th>Number of redirections</th>
+            </tr>
         
         </table>
+
     </div>
 
     <script>
+
+        // Function to copy the content of short url to the clipboard of url
         function copytoclipboard()
         {
             let shortUrl = document.getElementById('shorturl').innerHTML;
@@ -43,11 +59,13 @@
             navigator.clipboard.writeText(shortUrl);
         }
 
-        let tableData = '<%-data%>';
+        let tableData = '<%-data%>'; // Receiving data for table from server
         // console.log(JSON.parse(tableData).length);
 
         tableData = JSON.parse(tableData);
         let addedData = "";
+
+        // Adding rows in the html table for every entry in data returned from DB
         for(let i = 0; i < tableData.length ; i++)
         {
             addedData += "<tr>\
@@ -58,6 +76,7 @@
                 </tr>";
  
         }
+        // Setting up the inner html of table element to out generated data
 		document.getElementById('history-table').innerHTML += addedData;
 
 
