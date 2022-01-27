@@ -60,7 +60,7 @@ The Clipboard functionality works only in a secure environment which we will cre
 
 Refer to: **https://stackoverflow.com/questions/52054635/copy-clipboard-function-working-locally-but-not-working-server** for more details.
 
-**CURL Requests** (Replace CSD1234 with your own API Key)
+# **CURL Requests** (Replace CSD1234 with your own API Key)
 
 # Create Shorten Curl Example
 curl -d '{ "urldata": "https://pastebin.com/api/v1/paste" }' -H "Content-Type: application/json" -X POST "http://ec2-54-173-198-224.compute-1.amazonaws.com:70
