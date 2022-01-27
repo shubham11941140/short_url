@@ -60,5 +60,22 @@ The Clipboard functionality works only in a secure environment which we will cre
 
 Refer to: **https://stackoverflow.com/questions/52054635/copy-clipboard-function-working-locally-but-not-working-server** for more details.
 
+**CURL Requests** (Replace CSD1234 with your own API Key)
+
+# Create Shorten Curl Example
+curl -d '{ "urldata": "https://pastebin.com/api/v1/paste" }' -H "Content-Type: application/json" -X POST "http://ec2-54-173-198-224.compute-1.amazonaws.com:70
+00/api/createshorten/CSD1234"
+
+# Create Custom Short URL Curl Example
+curl -d '{ "customurldata": "cs559", "longurldata": "https://www.ashp.org/-/media/store%20files/p2418-sample-chapter-1.pdf", "ttl": "30" }' -H "Content-Type: application/json" -X POST "http://ec2-54-173-198-224.compute-1.amazonaws.com:7000/api/createcustomshorten/CSD1234"
+
+# Delete Short URL Example
+curl -d '{ "shorturl": "cs559" }' -H "Content-Type: application/json" -X POST "http://ec2-54-173-198-224.compute-1.amazonaws.com:7000/api/deleteurl/CSD1234"
+
+# To Read Short URL Example (Gives Long URL as output)
+curl -d '{ "shorturl": "Mh7e33" }' -H "Content-Type: application/json" -X POST "http://ec2-54-173-198-224.compute-1.amazonaws.com:7000/api/readshorten/CSD1234"
+
+
+
 
 
