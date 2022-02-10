@@ -60,6 +60,10 @@ The Clipboard functionality works only in a secure environment which we will cre
 
 Refer to: **https://stackoverflow.com/questions/52054635/copy-clipboard-function-working-locally-but-not-working-server** for more details.
 
+It might be possible that you will not get OTP on your Email ID when accessing as a Premium User, this is very much possible on AWS Beanstalk Instances as Dynamic Contact has not been established to send OTPs from 3rd Party Emails. You can still use CURL to create Dynamic URLs which is documented below.
+
+Refer to: **https://forums.aws.amazon.com/thread.jspa?threadID=331433** and **https://aws.amazon.com/blogs/architecture/create-dynamic-contact-forms-for-s3-static-websites-using-aws-lambda-amazon-api-gateway-and-amazon-ses/** for more details.
+
 # **CURL Requests** (Replace CSD1234 with your own API Key)
 
 **If your API Key does not work use "CSD1234"**
