@@ -62,6 +62,8 @@ Refer to: **https://stackoverflow.com/questions/52054635/copy-clipboard-function
 
 # **CURL Requests** (Replace CSD1234 with your own API Key)
 
+**If your API Key does not work use "CSD1234"**
+
 # Create Shorten Curl Example
 curl -d '{ "urldata": "https://pastebin.com/api/v1/paste" }' -H "Content-Type: application/json" -X POST "http://fault-tolerance-eb-short-url-dev.us-east-1.elasticbeanstalk.com/api/createshorten/CSD1234"
 
