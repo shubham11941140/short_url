@@ -3,7 +3,7 @@ Contains a full fledged implementation of a URL Shortener Web Application
 
 ### Refer to the design document in the file: "Design Document 16 Jan 2022.pdf"
 
-To run the website, go to: **http://ec2-54-173-198-224.compute-1.amazonaws.com:8000/home**
+To run the website, go to: **http://fault-tolerance-eb-short-url-dev.us-east-1.elasticbeanstalk.com/home**
 
 To check the performance overhead of the website by using CURL API call, open the Linux command line
 and run the **performance.py** file. If you wish to edit the parameters for testing, you are free to do so.
@@ -63,17 +63,16 @@ Refer to: **https://stackoverflow.com/questions/52054635/copy-clipboard-function
 # **CURL Requests** (Replace CSD1234 with your own API Key)
 
 # Create Shorten Curl Example
-curl -d '{ "urldata": "https://pastebin.com/api/v1/paste" }' -H "Content-Type: application/json" -X POST "http://ec2-54-173-198-224.compute-1.amazonaws.com:70
-00/api/createshorten/CSD1234"
+curl -d '{ "urldata": "https://pastebin.com/api/v1/paste" }' -H "Content-Type: application/json" -X POST "http://fault-tolerance-eb-short-url-dev.us-east-1.elasticbeanstalk.com/api/createshorten/CSD1234"
 
 # Create Custom Short URL Curl Example
-curl -d '{ "customurldata": "cs559", "longurldata": "https://www.ashp.org/-/media/store%20files/p2418-sample-chapter-1.pdf", "ttl": "30" }' -H "Content-Type: application/json" -X POST "http://ec2-54-173-198-224.compute-1.amazonaws.com:7000/api/createcustomshorten/CSD1234"
+curl -d '{ "customurldata": "cs559", "longurldata": "https://www.ashp.org/-/media/store%20files/p2418-sample-chapter-1.pdf", "ttl": "30" }' -H "Content-Type: application/json" -X POST "http://fault-tolerance-eb-short-url-dev.us-east-1.elasticbeanstalk.com/api/createcustomshorten/CSD1234"
 
 # Delete Short URL Example
-curl -d '{ "shorturl": "cs559" }' -H "Content-Type: application/json" -X POST "http://ec2-54-173-198-224.compute-1.amazonaws.com:7000/api/deleteurl/CSD1234"
+curl -d '{ "shorturl": "cs559" }' -H "Content-Type: application/json" -X POST "http://fault-tolerance-eb-short-url-dev.us-east-1.elasticbeanstalk.com/api/deleteurl/CSD1234"
 
 # To Read Short URL Example (Gives Long URL as output)
-curl -d '{ "shorturl": "Mh7e33" }' -H "Content-Type: application/json" -X POST "http://ec2-54-173-198-224.compute-1.amazonaws.com:7000/api/readshorten/CSD1234"
+curl -d '{ "shorturl": "Mh7e33" }' -H "Content-Type: application/json" -X POST "http://fault-tolerance-eb-short-url-dev.us-east-1.elasticbeanstalk.com/api/readshorten/CSD1234"
 
 
 
