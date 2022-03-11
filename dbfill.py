@@ -9,18 +9,16 @@ headers = {
 }
 
 # Read from CSV file
-with open('top-1m.csv', 'r') as csvfile:
+with open('URL Classification.csv', 'r') as csvfile:
     reader = csv.reader(csvfile)
     c = 1
     for row in reader:
-        print(row)
         c += 1
         if c == 10:
             break
         #break
-        website = 'https://' + row[1]
         route = path + '/createshorten/{0}'.format(key)
-        data = '{{"urldata":"{0}"}}'.format(row)
+        data = '{{"urldata":"{0}"}}'.format(row[1])
         #for i in range(1, count + 1):
         response = requests.post(route, headers=headers, data=data)
-        print("CURL REQUEST:", row, "GIVES RESPONSE:", response.text)
+        print("CURL REQUEST:", c, "FOR WEBSITE", row[1], "GIVES RESPONSE:", response.text)
