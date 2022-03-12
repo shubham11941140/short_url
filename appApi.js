@@ -4,6 +4,7 @@
 const express = require("express");
 const app = express();
 var mysql = require("mysql");
+const Redis = require('ioredis');
 
 /**
  * Setting up the cache
@@ -21,301 +22,353 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(express.json());
 
 // Setting up the database
-var con = mysql.createConnection(
-{
-    host: "database-2.cqztcdymd18c.us-east-1.rds.amazonaws.com",
-    user: "admin", //DB
-    password: "shubhamgupta1", //DB
+var con = mysql.createConnection({
+    host: "aa10f4pikqa37be.ci44ziqzvjp1.us-east-1.rds.amazonaws.com",
+    user: "shubham1194", //DB
+    password: "shubhamgupta", //DB
     database: "URL",
 });
 
-con.connect(function (err)
-{
-    if (err)
-    {
-        console.log("Error in Databse connection");
+con.connect(function (err) {
+    if (err) {
+        console.log("Error in Mysql Databse connection");
         throw err;
     }
     console.log("Connected Databse!");
 });
 
+
+
+//Redis DB
+
+// const redis = new Redis({
+//     host: 'localhost',
+//     port: 6379
+//     // password: '<password>'
+// });
+
+const redis = new Redis.Cluster([
+    {
+      port: 6379,
+      host: "myredis-0001-001.idqzy4.0001.use1.cache.amazonaws.com",
+    },
+    {
+      port: 6379,
+      host: "myredis-0001-002.idqzy4.0001.use1.cache.amazonaws.com",
+    },
+    {
+        port: 6379,
+        host: "myredis-0001-003.idqzy4.0001.use1.cache.amazonaws.com",
+      },
+  ]);
+
+redis.on('connect', () => {
+    console.log("Redis Connected");
+})
+
 //Create Short URL
-app.post("/api/createshorten/:apiKey", async function (req, res)
-{
-    // create user in req.body
+
+
+
+app.post("/api/createshorten/:apiKey", async function (req, res) {
+    // redis.set('myNAme007','bond');
+    // redis.get("dhruvHarsh", (err,res1)=>{
+    //     if(err)
+    //         console.log(err);
+    //     else if(res1!==null)
+    //         console.log(res1);
+    //     else
+    //         console.log('null returned from redis');
+    //     res.send("From redis");
+    // });
+
 
     let apiKey = req.params.apiKey;
-
+    if (apiKey != 'CSD1234') {
+        res.send('Please provide Dev API Key');
+        return;
+    }
     /**
      * SQL query to check the API key for the particular Email
      */
-    let sqlapi = `SELECT email from emailAPIKeys where apikey = "${apiKey}" ; `;
-    let dataapi = " ";
-    con.query(sqlapi, dataapi, (err, result) => {
+    // let sqlapi = `SELECT email from emailAPIKeys where apikey = "${apiKey}" ; `;
+    // let dataapi = " ";
+    // con.query(sqlapi, dataapi, (err, result) => {
 
-        if (err)
-        {
-            console.log("Something Went Wrong... Try Again...");
-            res.send("Please Try again");
-        }
-        else if (result.length == 0)
-        {
-            console.log("API Key Invalid");
-            res.send("API key not valid");
-        }
-        else
-        {
-            Email = result[0].email;
-            let sql = "INSERT Into urlMap Set ?";
-            let url1 = makeid();
-            let longurl = req.body.urldata;
-            if (longurl == undefined)
-            {
-                res.send("Provide URL" + longurl);
-                return;
-            }
-            let timestamp = new Date();
-            let data = {
-                email: Email,
-                url: longurl,
-                shortenedurl: url1,
-                creation_timestamp: timestamp,
-            };
+    //     if (err)
+    //     {
+    //         console.log("Something Went Wrong... Try Again...");
+    //         res.send("Please Try again");
+    //     }
+    //     else if (result.length == 0)
+    //     {
+    //         console.log("API Key Invalid");
+    //         res.send("API key not valid");
+    //     }
+    //     else
+    //     {
+    // Email = result[0].email;
+    let sql = "INSERT Into urlMap Set ?";
+    let url1 = makeid();
+    let longurl = req.body.urldata;
+    if (longurl == undefined) {
+        res.send("Provide URL" + longurl);
+        return;
+    }
+    let timestamp = new Date();
+    let data = {
+        // email: Email,
+        url: longurl,
+        shortenedurl: url1,
+        creation_timestamp: timestamp,
+    };
 
-            /**
-             * SQL query to insert the data into DB
-             */
-            let query = con.query(sql, data, (err, result) => {
-                if (err)
-                {
-                    res.send("Something Went Wrong... Try Again...");
-                    // console.log(err);
-                    return;
-                }
-                //   res.render("shortURLResponse", { shorturl: url1 });
-
-                /** Send back the response of short URL */
-                res.json({ shorturl: url1 });
-            });
+    /**
+     * SQL query to insert the data into DB
+     */
+    let query = con.query(sql, data, (err, result) => {
+        if (err) {
+            res.send("Something Went Wrong... Try Again...");
+            // console.log(err);
+            return;
         }
+        //   res.render("shortURLResponse", { shorturl: url1 });
+
+        /** Send back the response of short URL */
+        res.json({ shorturl: url1 });
     });
+    //     }
+    // });
 });
 
 
 // Create Custom Short URL
-app.post("/api/createcustomshorten/:apiKey", async function (req, res)
-{
+app.post("/api/createcustomshorten/:apiKey", async function (req, res) {
     // create user in req.body
 
     let apiKey = req.params.apiKey;
+    if (apiKey != 'CSD1234') {
+        res.send('Please provide Dev API Key');
+        return;
+    }
     /**
      * SQL query to check the API key for the particular Email
      */
-    let sqlapi = `SELECT email from emailAPIKeys where apikey = "${apiKey}" ; `;
-    let dataapi = " ";
-    con.query(sqlapi, dataapi, (err, result) => {
+    // let sqlapi = `SELECT email from emailAPIKeys where apikey = "${apiKey}" ; `;
+    // let dataapi = " ";
+    // con.query(sqlapi, dataapi, (err, result) => {
 
-        if (err)
-        {
-            console.log("Something Went Wrong... Try Again...");
-            res.send("Please Try again");
+    //     if (err)
+    //     {
+    //         console.log("Something Went Wrong... Try Again...");
+    //         res.send("Please Try again");
+    //     }
+    //     else if (result.length == 0)
+    //     {
+    //         console.log("API Key Invalid");
+    //         res.send("API key not valid");
+    //     }
+    //     else
+    //     {
+    // Email = result[0].email;
+
+    let Url = req.body.longurldata;
+    let customurl = req.body.customurldata;
+    let TTL = req.body.ttl;
+    // console.log("Now",req.body.email);
+    // console.log("OK",Url,customurl,TTL);
+    let timestamp = new Date();
+
+    /**
+     * Checking for the undefined values
+     */
+    if (
+        Url == "undefined" ||
+        Url == "" ||
+        customurl == "undefined" ||
+        customurl == ""
+    ) {
+        res.send("No urldata given");
+        return;
+    }
+
+    if (
+        TTL == undefined ||
+        TTL > 120 ||
+        TTL == ""
+    ) {
+        TTL = 60;
+        // console.log("Yeah");
+        // return;
+    }
+
+    /**
+     * SQL query to insert the data into the URL table
+     */
+    let sqlinsert = "INSERT Into urlMap Set ?";
+    let datainsert = {
+        url: Url,
+        shortenedurl: customurl,
+        ttl: TTL,
+        creation_timestamp: timestamp,
+        num_of_redirections: 0,
+        // email: Email,
+    };
+
+    /**
+     * SQL query to search the data corresponding the given short url
+     */
+    let sqlsearch = `SELECT * from urlMap where  shortenedurl = "${customurl}" ;`;
+    let datasearch = " ";
+    con.query(sqlsearch, datasearch, (err, result) => {
+        if (err) {
+            res.send("Something Went Wrong... Try Again...");
+            console.log(err);
+            return;
         }
-        else if (result.length == 0)
-        {
-            console.log("API Key Invalid");
-            res.send("API key not valid");
-        }
-        else
-        {
-            Email = result[0].email;
 
-            let Url = req.body.longurldata;
-            let customurl = req.body.customurldata;
-            let TTL = req.body.ttl;
-            // console.log("Now",req.body.email);
-            // console.log("OK",Url,customurl,TTL);
-            let timestamp = new Date();
-
-            /**
-             * Checking for the undefined values
-             */
-            if (
-                Url == "undefined" ||
-                Url == "" ||
-                customurl == "undefined" ||
-                customurl == ""
-            )
-            {
-                res.send("No urldata given");
-                return;
-            }
-
-            if (
-                TTL == undefined ||
-                TTL > 120 ||
-                TTL == ""
-            )
-            {
-                TTL = 60;
-                // console.log("Yeah");
-                // return;
-            }
-
-            /**
-             * SQL query to insert the data into the URL table
-             */
-            let sqlinsert = "INSERT Into urlMap Set ?";
-            let datainsert = {
-                url: Url,
-                shortenedurl: customurl,
-                ttl: TTL,
-                creation_timestamp: timestamp,
-                num_of_redirections: 0,
-                email: Email,
-            };
-
-            /**
-             * SQL query to search the data corresponding the given short url
-             */
-            let sqlsearch = `SELECT * from urlMap where  shortenedurl = "${customurl}" ;`;
-            let datasearch = " ";
-            con.query(sqlsearch, datasearch, (err, result) => {
-                if (err)
-                {
+        /**
+         * If the given custom url is not present in the DB
+         */
+        if (result.length == 0) {
+            let query = con.query(sqlinsert, datainsert, (err, result) => {
+                if (err) {
                     res.send("Something Went Wrong... Try Again...");
                     console.log(err);
                     return;
                 }
-
-                /**
-                 * If the given custom url is not present in the DB
-                 */
-                if (result.length == 0)
-                {
-                    let query = con.query(sqlinsert, datainsert, (err, result) => {
-                        if (err)
-                        {
-                            res.send("Something Went Wrong... Try Again...");
-                            console.log(err);
-                            return;
-                        }
-                        data = " ";
-                        //   res.render("premiumShortURLResponse", { shorturl: customurl });
-                        res.json({ shorturl: customurl });
-                    });
-                }
-                else
-                {
-                    res.send(`Try with other URL, This short Url already exits`);
-                }
+                data = " ";
+                //   res.render("premiumShortURLResponse", { shorturl: customurl });
+                res.json({ shorturl: customurl });
             });
         }
+        else {
+            res.send(`Try with other URL, This short Url already exits`);
+        }
     });
+    //     }
+    // });
 });
 
 // Read Normal Short URL
-app.post("/api/readshorten/:apiKey", async function (req, res)
-{
+app.post("/api/readshorten/:apiKey", async function (req, res) {
     // create user in req.body
 
     let apiKey = req.params.apiKey;
+    if (apiKey != 'CSD1234') {
+        res.send('Please provide Dev API Key');
+        return;
+    }
+
 
     /**
      * Searching the Email for the corresponding API key
      */
-    let sqlapi = `SELECT email from emailAPIKeys where apikey = "${apiKey}" ; `;
-    let dataapi = " ";
-    con.query(sqlapi, dataapi, (err, result) => {
+    // let sqlapi = `SELECT email from emailAPIKeys where apikey = "${apiKey}" ; `;
+    // let dataapi = " ";
+    // con.query(sqlapi, dataapi, (err, result) => {
 
-        if (err)
-        {
-            console.log("Something Went Wrong... Try Again...");
-            res.send("Please Try again");
+    //     if (err)
+    //     {
+    //         console.log("Something Went Wrong... Try Again...");
+    //         res.send("Please Try again");
+    //     }
+    //     else if (result.length == 0)
+    //     {
+    //         console.log("API Key Invalid");
+    //         res.send("API key not valid");
+    //     }
+    //     else
+    //     {
+    //         Email = result[0].email;
+
+    link = req.body.shorturl;
+    let data = " ";
+    // res.send(link);
+    // return;
+    if (link == undefined) {
+        res.send("Can't Read URL");
+        return;
+    }
+
+    redis.get(link, (err, reply) => {
+        if (err) {
+            console.log(err);
         }
-        else if (result.length == 0)
-        {
-            console.log("API Key Invalid");
-            res.send("API key not valid");
+        if (reply != null) {
+            res.json({ longURL: reply });
+            console.log("Hit from cache");
+
+            //Update redirection count
+            let sqlupdate = `UPDATE urlMap SET num_of_redirections = num_of_redirections + 1 where  shortenedurl = "${link}";`;
+            let query = con.query(sqlupdate, data, (err, result) => {
+                if (err) {
+                    console.log("Increment failed in redirection counts");
+                    // throw err;
+                    return;
+                }
+            });
+            return;
         }
-        else
-        {
-            Email = result[0].email;
-            let data = " ";
-
-            //     //**********************************To Update this LINk************************* /
-            link = req.body.shorturl;
-            // res.send(link);
-            // return;
-            if (link == undefined)
+        else {
             {
-                res.send("Can't Read URL");
-                return;
-            }
+                
 
-            //Using Cache
-            if (myCacheMap.has(link))
-            {
-                // console.log();
-                // res.redirect(myCacheMap.get(link));
-                res.json({ longURL: myCacheMap.get(link) });
-                console.log("Hit from cache");
+                //     //**********************************To Update this LINk************************* /
 
-                //Update redirection count
-                let sqlupdate = `UPDATE urlMap SET num_of_redirections = num_of_redirections + 1 where  shortenedurl = "${link}";`;
-                let query = con.query(sqlupdate, data, (err, result) => {
-                    if (err)
-                    {
-                        console.log("Increment failed in redirection counts");
-                        // throw err;
-                        return;
-                    }
-                });
-                return;
-            }
-            else
-            {
+
+                //Using Cache
+                // if (myCacheMap.has(link)) {
+                //     // console.log();
+                //     // res.redirect(myCacheMap.get(link));
+
+                // }
+                // else {
                 //Db query for link of shorturl
                 let sql = `SELECT url,ttl,creation_timestamp from urlMap where shortenedurl = "${link}" ; `;
                 con.query(sql, data, (err, result) => {
 
-                    if (err)
-                    {
+                    if (err) {
                         res.send("Something Went Wrong... Try Again...");
                         return;
                     }
 
-                    if (result.length == 0)
-                    {
+                    if (result.length == 0) {
                         res.send("No URL for this ShortURL exits");
                         return;
                     }
-                    else
-                    {
+                    else {
                         res.json({ longURL: result[0].url });
-                        halfMyCacheMap();
-                        myCacheMap.set(link, result[0].url);
+                        // halfMyCacheMap();
+                        // myCacheMap.set(link, result[0].url);
+                        redis.set(link, result[0].url);
                         //Update redirection count
                         let sqlupdate = `UPDATE urlMap SET num_of_redirections = num_of_redirections + 1 where  shortenedurl = "${link}";`;
                         let query = con.query(sqlupdate, data, (err, result) => {
-                            if (err)
-                            {
+                            if (err) {
                                 //   console.log("Increment failed in redirection counts");
                                 return;
                             }
                         });
                     }
                 });
+                // }
             }
         }
     });
+    //     }
+    // });
 });
 
 //Delete URL
-app.post("/api/deleteurl/:apiKey", async function (req, res)
-{
+app.post("/api/deleteurl/:apiKey", async function (req, res) {
     // create user in req.body
 
     let apiKey = req.params.apiKey;
+    if (apiKey != 'CSD1234') {
+        res.send('Please provide Dev API Key');
+        return;
+    }
 
     /**
      * Search for the Email for the corresponding API key
@@ -324,43 +377,36 @@ app.post("/api/deleteurl/:apiKey", async function (req, res)
     let dataapi = " ";
     con.query(sqlapi, dataapi, (err, result) => {
 
-        if (err)
-        {
+        if (err) {
             console.log("Something Went Wrong... Try Again...");
             res.send("Please Try again");
         }
-        else if (result.length == 0)
-        {
+        else if (result.length == 0) {
             console.log("API Key Invalid");
             res.send("API key not valid");
         }
-        else
-        {
+        else {
             Email = result[0].email;
             let data = " ";
 
             //**********************************To Upadate this LINk************************* /
             link = req.body.shorturl;
-            if (link == undefined)
-            {
+            if (link == undefined) {
                 res.send("Can't Read URL");
                 return;
             }
-            else
-            {
+            else {
                 //check user has right over URl
 
                 let sql = `SELECT email,url,ttl,creation_timestamp from urlMap where shortenedurl = "${link}" ; `;
                 con.query(sql, data, (err, result) => {
 
-                    if (err)
-                    {
+                    if (err) {
                         res.send("Something Went Wrong... Try Again...");
                         return;
                     }
 
-                    if (result.length == 0)
-                    {
+                    if (result.length == 0) {
                         res.send("No URL for this ShortURL exits");
                         return;
                     }
@@ -372,77 +418,47 @@ app.post("/api/deleteurl/:apiKey", async function (req, res)
                      * If the current user Email is equal to the Email from which the short url was created
                      * then user can delete the short url
                      */
-                    if (result[0].email == Email)
-                    {
+                    if (result[0].email == Email) {
                         let sqldel = `DELETE from urlMap  where  shortenedurl = "${link}";`;
                         let query = con.query(sqldel, data, (err, result) => {
-                            if (err)
-                            {
+                            if (err) {
                                 //   console.log("Increment failed in redirection counts");
                                 return;
                             }
+
                             res.send("Delete Successful");
+                            redis.del(link);
                         });
                     }
-                    else
-                    {
-                        res.send("Not enough permission");
-                        return;
+                    else {
+                        // res.send("Not enough permission");
+                        // return;
+
+                        let sqldel = `DELETE from urlMap  where  shortenedurl = "${link}";`;
+                        let query = con.query(sqldel, data, (err, result) => {
+                            if (err) {
+                                //   console.log("Increment failed in redirection counts");
+                                return;
+                            }
+
+                            res.send("Delete Successful");
+                            redis.del(link);
+                        });
                     }
                 });
 
                 //Using Cache
-                if (myCacheMap.has(link))
-                {
-                    myCacheMap.delete(link);
-                }
+                // if (myCacheMap.has(link))
+                // {
+                //     myCacheMap.delete(link);
+                // }
+
             }
         }
     });
 });
 
-// //Give Link of short URL
 
-/*
-var express = require('express')
-var bodyParser = require('body-parser')
-
-var app = express()
-
-const server = require("http").Server(app);
-// create application/json parser
-var jsonParser = bodyParser.json()
-
-// create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
-
-// POST /login gets urlencoded bodies
-app.post('/login', urlencodedParser, function (req, res) {
-    // console.log("Hello");
-    // console.log("Helli",res.send('welcome,1 '));
-    const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-    // temp=typeof(obj)
-    console.log(obj); // { title: 'product' }
-    // res.send('welcome,1 ')
-    // sleep(1);
-    // console.log(req.body.username,rollno);
-    res.json({a:1});
-});
-
-// POST /api/users gets JSON bodies
-app.post('/api/users', jsonParser, function (req, res) {
-  // create user in req.body
-});
-
-app.post('/api/:apiKey', jsonParser, function (req, res) {
-    // create user in req.body
-  });
-
-// app.post('/test/:name/:rollnum=11',(req,res)=>{
-//     console.log(req.);
-//     res.send("Ok");
-// });
-*/
 //UTILITY FUNCtion
 
 app.listen(7000, (e) => {
@@ -452,8 +468,7 @@ app.listen(7000, (e) => {
 /**
  * Function to generate the random string of 11 characters from a set of preselected 62 characters
  */
-function makeid(/*length = 5*/)
-{
+function makeid(/*length = 5*/) {
     var result = "";
     var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     var charactersLength = characters.length;
@@ -467,38 +482,30 @@ function makeid(/*length = 5*/)
     return result;
 }
 
-// let myPromise = new Promise(function(resolve) {
-//   resolve("I love You !!");
-// });
-
 /**
  * Function to validate the API key of a user so that he does not use somebody else's API key
  * and give his/her right API key
  */
-async function validateAPIkey(apiKey)
-{
+async function validateAPIkey(apiKey) {
     let sql = `SELECT * from urlMap where shortenedurl = "${apiKey}" ; `;
     let data = " ";
     let query = con.query(sql, data, (err, result) => {
 
-        if (err)
-        {
+        if (err) {
             console.log("Something Went Wrong... Try Again...");
             // new Promise(function(resolve) {
             //   resolve("F");
             // });
             return "F";
         }
-        if (result.length == 0)
-        {
+        if (result.length == 0) {
             console.log("API Key Invalid");
             // new Promise(function(resolve) {
             //   resolve("F");
             // });
             return "F";
         }
-        else
-        {
+        else {
             return result[0].email;
         }
         // new Promise(function(resolve) {
@@ -510,10 +517,8 @@ async function validateAPIkey(apiKey)
 /**
  * Function to empty half the cache when its size exceeds 3M
  */
-function halfMyCacheMap()
-{
-    if (myCacheMap.size > 3000000)
-    {
+function halfMyCacheMap() {
+    if (myCacheMap.size > 3000000) {
         let cnt = 0;
         //Can also Implement it
         myCacheMap.clear();
