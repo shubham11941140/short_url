@@ -1,6 +1,19 @@
 # short_url
 Contains a full fledged implementation of a URL Shortener Web Application
 
+## Submitted a full-fledged research paper with a lot of testing scripts to generate load.
+
+**Paper link: https://sigmetrics22posters.hotcrp.com/doc/sigmetrics22posters-paper88.pdf**
+
+Load Testing:
+
+1. Python
+2. K6
+3. Javascript
+4. Golang
+
+## Project Description
+
 ### Refer to the design document in the file: "Design Document 16 Jan 2022.pdf" and "Design Document Feb 10.pdf"
 
 To run the website, go to: **http://fault-tolerance-eb-short-url-dev.us-east-1.elasticbeanstalk.com/home**
