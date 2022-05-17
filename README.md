@@ -1,7 +1,7 @@
 # short_url
 Contains a full fledged implementation of a URL Shortener Web Application
 
-### Refer to the design document in the file: "Design Document 16 Jan 2022.pdf"
+### Refer to the design document in the file: "Design Document 16 Jan 2022.pdf" and "Design Document Feb 10.pdf"
 
 To run the website, go to: **http://fault-tolerance-eb-short-url-dev.us-east-1.elasticbeanstalk.com/home**
 
@@ -80,7 +80,7 @@ curl -d '{ "shorturl": "cs559" }' -H "Content-Type: application/json" -X POST "h
 # To Read Short URL Example (Gives Long URL as output)
 curl -d '{ "shorturl": "Mh7e33" }' -H "Content-Type: application/json" -X POST "http://fault-tolerance-eb-short-url-dev.us-east-1.elasticbeanstalk.com/api/readshorten/CSD1234"
 
-
+Lot of test has been done to check the application in different places and a few folders have attached testing scripts.
 
 
 
