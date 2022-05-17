@@ -1,0 +1,16 @@
+{
+    "name": "URLSHORTEN",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "ejs": "^3.1.6",
+        "express": "^4.17.2",
+        "http": "^0.0.1-security",
+        "mysql": "^2.18.1",
+        "nodemailer": "^6.7.2"
+    },    
+    "scripts": {
+        "start": "node app.js",
+	"poststart": "node appApi.js"
+    }
+}

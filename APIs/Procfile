@@ -1,0 +1,4 @@
+web: npm install
+web: node app.js
+web: node appApi.js
+web: npm start
