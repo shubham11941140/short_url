@@ -12,10 +12,12 @@ int main()
     fstream newfile;
     newfile.open("consolelog.txt", ios::in); // open a file to perform read operation using file object
     if (newfile.is_open())
-    { // checking whether the file is open
+    {
+		// checking whether the file is open
         string tp;
         while (getline(newfile, tp))
-        { // read data from file object and put it into string.
+        {
+			// read data from file object and put it into string.
             // cout << tp << "\n"; //print the data of the string
             vector<string> tokens;
 
@@ -29,25 +31,34 @@ int main()
             {
                 tokens.push_back(intermediate);
             }
+
             for (string s : tokens)
                 cout << s << " ";
             cout << endl;
+
             long long curTime = stoll(tokens[1]);
+
             if (startTime == 0)
                 startTime = curTime;
+
             double latency = stod(tokens[2]);
+
             if (latency == 0)
                 continue;
+
             int fail = stoll(tokens[3]);
             int index = (curTime - startTime) / 10000;
+
             if (index > 180)
                 continue;
+
             lsum[index] += latency;
             reqcount[index]++;
             failures[index]++;
         }
         newfile.close(); // close the file object.
     }
+
     fstream outfile;
     outfile.open("plot.txt", ios::out); // open a file to perform write operation using file object
     if (outfile.is_open())              // checking whether the file is open

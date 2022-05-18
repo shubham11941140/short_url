@@ -1,5 +1,4 @@
 import http from "k6/http";
-// import { check } from 'k6';
 
 export var SJS = (function() {
 
@@ -9,7 +8,6 @@ export var SJS = (function() {
     };
 
     function _fillArrayWithNumber(size, num) {
-        // thanks be to stackOverflow... this is a beautiful one-liner
         return Array.apply(null, Array(size)).map(Number.prototype.valueOf, num);
     };
 
@@ -19,6 +17,7 @@ export var SJS = (function() {
         while (i < upper) out.push(i++);
         return out;
     };
+
     // Prototype function
     function _samplerFunction(size) {
         if (!Number.isInteger(size) || size < 0) {
@@ -33,6 +32,7 @@ export var SJS = (function() {
         }
         return result;
     };
+
     // Prototype for discrete distributions
     var _samplerPrototype = {
         sample: _samplerFunction
@@ -63,14 +63,13 @@ export var SJS = (function() {
         }
 
         result.toString = function() {
-            return "Binom( " + [n, p].join(", ") +
-                " )";
+            return "Binom( " + [n, p].join(", ") + " )";
         }
 
         return result;
     }
 
-    function Discrete(probs) { // probs should be an array of probabilities. (they get normalized automagically) //
+    function Discrete(probs) {
 
         var result = Object.create(_samplerPrototype),
             k = probs.length;
@@ -108,9 +107,7 @@ export var SJS = (function() {
         }
 
         result.toString = function() {
-            return "Dicrete( [" +
-                probs.join(", ") +
-                "] )";
+            return "Dicrete( [" + probs.join(", ") + "] )";
         };
 
         return result;
@@ -214,6 +211,7 @@ function sample_from_array(array, numSamples, withReplacement) {
             result.push(array[disc.draw()]);
         }
     } else {
+
         // instead of splicing, consider sampling from an array of possible indices? meh?
         copy = array.slice(0);
         while (numSamples--) {
@@ -226,6 +224,7 @@ function sample_from_array(array, numSamples, withReplacement) {
     }
     return result;
 }
+
 export function getRandomIntInclusivePareto(min, max, alpha = 1.0) {
     var probabilities = []; // probabilities
     for (var k = min; k <= max; ++k) {
@@ -238,142 +237,23 @@ export function getRandomIntInclusivePareto(min, max, alpha = 1.0) {
     return q;
 }
 
-// console.log("Testing Paretto");
-
-// var t = getRandomIntInclusivePareto(1, 10, 1.3);
-
-// console.log(t);
-
 export function getPareto(n) {
     return getRandomIntInclusivePareto(1, n, 1);
 }
 
 function myFunc(n) {
-    // var map1 = new Map();
-    // console.log(`http://url-shortener4-dev.ap-south-1.elasticbeanstalk.com/c${getPareto(100)}_${Math.floor(Math.random()*100)}`);
     for (let i = 0; i < n; i++) {
         var t = getRandomIntInclusivePareto(1, 1000, 1);
-        // console.log(t);
-        // map1[t]++;
     }
-
 }
-
-// myFunc(1);
-
-// export const options = {
-//     scenarios: {
-//       constant_request_rate: {
-//         executor: 'constant-arrival-rate',
-//         rate: 1000,
-//         timeUnit: '1s',
-//         duration: '180s',
-//         preAllocatedVUs: 1,
-//         maxVUs: 1,
-//       },
-//     },
-//     maxRedirects: 0,
-// 	// batch: 100,
-// 	// discardResponseBodies: true,
-//   };
-
-
-// export default function () {
-//     // getPareto(100);
-//   const url =
-//   [
-//       `http://url-shortener4-dev.ap-south-1.elasticbeanstalk.com/c${getPareto(1000)}_${Math.floor(Math.random()*1000)}`,
-//   ];
-//     // console.log(url);
-//   url.forEach(myFunc);
-//   function myFunc(url){
-//     const res = http.get(url);
-//     // console.log(res.body);
-//   }
-// //   console.log(res.body);
-// }
-
-
-// discrete.js
-// Sample from discrete distributions.
-
-// export default function ()
-// {
-//     // var short = getRandomString(getRandomInt(1));
-//     // var lurl = "https://www.google.com/search?q=";
-//     // console.log(short);
-//     // const pre = "https://github.com/shubham11941140/short_url/";
-//     const url = 'http://url-shortener4-dev.ap-south-1.elasticbeanstalk.com/';
-//     const payload = JSON.stringify({
-//         // urldata: pre + short,
-//         // shorturl: `${getPareto(150)}_${Math.floor(Math.random()*999)}`
-//         long_url: "https://www.google.com",
-//          short_url: `test${getPareto(150)}_${Math.floor(Math.random()*999)}`,
-//         // short_url: ,
-//           exp_date: 31
-//     });
-//     // curl    -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhbnkiLCJleHAiOjE2NDk2NTg0NjYsImlzcyI6ImF1dGgtYXBwIiwic3ViIjoiY3M1NTkifQ._JshleXML9zqsV4sDAtaoBhxKPldyE2MPw_2Fo8XjGw"
-
-//         console.log(payload);
-//     const params = {
-//     headers: {
-//         'Content-Type': 'application/json',
-//         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhbnkiLCJleHAiOjE2NDk2NTg0NjYsImlzcyI6ImF1dGgtYXBwIiwic3ViIjoiY3M1NTkifQ._JshleXML9zqsV4sDAtaoBhxKPldyE2MPw_2Fo8XjGw'
-//     },
-//     };
-
-//     // send a HTTP POST request
-//     // console.log(payload);
-//     const res = http.post(url, payload, params);
-//     // console.log(res.body);
-// }
-
-
-// export default function ()
-// {
-//     // var short = getRandomString(getRandomInt(1));
-//     // var lurl = "https://www.google.com/search?q=";
-//     // console.log(short);
-//     // const pre = "https://github.com/shubham11941140/short_url/";
-// 	for(let i=0;i<100;i++)
-// 	{
-//     const url = 'http://testingcache.eba-kyntw523.us-east-1.elasticbeanstalk.com/api/readshorten/CSD1234';
-//     const payload = JSON.stringify({
-//         // urldata: pre + short,
-//         shorturl: `${getPareto(1001)-1}_${Math.floor(Math.random()*999)}`
-//     });
-
-//     const params = {
-//     headers: {
-//         'Content-Type': 'application/json',
-//     },
-//     };
-
-//     // send a HTTP POST request
-//     // console.log(payload);
-//     http.post(url, payload, params);}
-//     // console.log(res.body);
-// }
-
 
 export const options = {
     duration: '30m',
-    // vus: 1,
     maxRedirects: 0,
-    // discardResponseBodies: true,
 };
 
 export var t = 0;
 export default function() {
-    // const requests = [];
-    // for(let i=0;i<1000;i++){
-    //     const req1 = {
-    //         method: 'GET',
-    //         url: `http://url-shortener4-dev.ap-south-1.elasticbeanstalk.com/${getPareto(1001)-1}_${Math.floor(Math.random()*999)}`,
-    //     };
-    //     requests.push(req1);
-    // }
-    // const res = http.batch(requests);
     if (t === 0) {
         console.log(Date.now(), 0, 0);
         t = 1;
