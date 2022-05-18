@@ -1,111 +1,50 @@
 /**
  * Importing Libraries
  */
- const express = require("express");
- const app = express();
- var mysql = require("mysql");
- const Redis = require('ioredis');
- 
- /**
-  * Setting up the cache
-  */
- var myCacheMap = new Map();
- 
- /**
-  * Initializing middlewares
-  */
- // const server = require("http").Server(app);
- var bodyParser = require("body-parser");
- app.use(bodyParser.json());
- app.use(bodyParser.urlencoded({ extended: true }));
- // app.use(express.static("public"));
- // app.use(express.json());
- 
+const express = require("express");
+const app = express();
+var mysql = require("mysql");
+const Redis = require('ioredis');
 
+/**
+ * Setting up the cache
+ */
+var myCacheMap = new Map();
 
+/**
+ * Initializing middleware
+ */
+var bodyParser = require("body-parser");
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
- const redis = new Redis({
+const redis = new Redis({
     host: 'redis-mysql-3.ncfh49.0001.aps1.cache.amazonaws.com',
     port: 6379,
-  });
-  
-  redis.on('connect', () => {
+});
+
+redis.on('connect', () => {
     console.log("Redis Connected");
-  })
+})
 
-  
+// Databases
+var con = mysql.createConnection({
+    host: "database-1.cpd14h2dbny0.ap-south-1.rds.amazonaws.com",
+    user: "admin", //DB
+    password: "shubhamgupta", //DB
+    database: "URL",
+});
 
-
-    // Databases
-    var con = mysql.createConnection({
-        host: "database-1.cpd14h2dbny0.ap-south-1.rds.amazonaws.com",
-        user: "admin", //DB
-        password: "shubhamgupta", //DB
-        database: "URL",
-      });
-      con.connect(function (err) {
-        if (err) {
-          console.log('Error in Databse connection');
-          throw err;
-        }
-        console.log("Connected Databse!");
-      });
-
-
-
- // Setting up the database
-//  var con = mysql.createConnection({
-//      host: "database-1.cc8kdzo9xe3r.ap-south-1.rds.amazonaws.com",
-//      user: "admin", //DB
-//      password: "shubhamgupta", //DB
-//      database: "URL",
-//  });
- 
-//  con.connect(function (err) {
-//      if (err) {
-//          console.log("Error in Mysql Databse connection");
-//          throw err;
-//      }
-//      console.log("Connected Databse!");
-//  });
- 
-//Redis DB
-
-// const redis = new Redis({
-//     host: 'shubham.abrojw.clustercfg.aps1.cache.amazonaws.com',
-//     port: 6379
-//     // password: '<password>'
-// });
-
-
-//  const redis = new Redis.Cluster([
-//      {
-//        port: 6379,
-//        host: "shubham-0001-001.abrojw.0001.aps1.cache.amazonaws.com",
-//      },
-//      {
-//        port: 6379,
-//        host: "shubham-0001-002.abrojw.0001.aps1.cache.amazonaws.com",
-//      },
-
-//      {
-//        port: 6379,
-//        host: "shubham-0002-001.abrojw.0001.aps1.cache.amazonaws.com",
-//      },
-//      {
-//          port: 6379,
-//          host: "shubham-0002-002.abrojw.0001.aps1.cache.amazonaws.com",
-//        },
-//    ]);
- 
-//  redis.on('connect', () => {
-//      console.log("Redis Connected");
-//  })
-
- 
+con.connect(function(err) {
+    if (err) {
+        console.log('Error in Databse connection');
+        throw err;
+    }
+    console.log("Connected Databse!");
+});
 
 // Create Custom Short URL
-app.post("/api/createcustomshorten/:apiKey", async function (req, res) {
+app.post("/api/createcustomshorten/:apiKey", async function(req, res) {
     // create user in req.body
 
     let apiKey = req.params.apiKey;
@@ -113,9 +52,10 @@ app.post("/api/createcustomshorten/:apiKey", async function (req, res) {
         res.send('Please provide Dev API Key');
         return;
     }
-    //  console.log(apiKey);
+
     let Url = req.body.longurldata;
     let customurl = req.body.customurldata;
+
     /**
      * Checking for the undefined values
      */
@@ -161,28 +101,23 @@ app.post("/api/createcustomshorten/:apiKey", async function (req, res) {
                     return;
                 }
                 data = " ";
-                //   res.render("premiumShortURLResponse", { shorturl: customurl });
                 res.json({ shorturl: customurl });
             });
-        }
-        else {
+        } else {
             res.send(`Try with other URL, This short Url already exits`);
         }
     });
 });
 
 // Read Normal Short URL
-app.post("/api/readshorten/:apiKey", async function (req, res) {
+app.post("/api/readshorten/:apiKey", async function(req, res) {
     // create user in req.body
 
     let apiKey = req.params.apiKey;
-    //  res.redirect('localhost:7070/api/readshorten/'+apiKey)
-    // return
     if (apiKey != 'CSD1234') {
         res.send('Please provide Dev API Key');
         return;
     }
-
 
     link = req.body.shorturl;
     let data = " ";
@@ -192,23 +127,18 @@ app.post("/api/readshorten/:apiKey", async function (req, res) {
     }
 
     if (myCacheMap.has(link)) {
-        // res.redirect(myCacheMap.get(link));
         res.json({ longURL: myCacheMap.get(link) });
-        // console.log("Hit from In-cache");
         return;
-    }
-    else {
+    } else {
         redis.get(link, (err, reply) => {
             if (err) {
                 console.log(err);
             }
             if (reply != null) {
                 res.json({ longURL: reply });
-                insertInMem(link,reply);
-                // console.log("Hit from Redis cache");
+                insertInMem(link, reply);
                 return;
-            }
-            else {
+            } else {
                 {
                     let sql = `SELECT url from urlMap where shortenedurl = "${link}" ; `;
                     con.query(sql, data, (err, result) => {
@@ -219,11 +149,10 @@ app.post("/api/readshorten/:apiKey", async function (req, res) {
                         if (result.length == 0) {
                             res.send("No URL for this ShortURL exits");
                             return;
-                        }
-                        else {
+                        } else {
                             res.json({ longURL: result[0].url });
                             redis.set(link, result[0].url);
-                            insertInMem(link,result[0].url);
+                            insertInMem(link, result[0].url);
                         }
                     });
                 }
@@ -233,20 +162,17 @@ app.post("/api/readshorten/:apiKey", async function (req, res) {
 });
 
 app.get("/:temp", (req, res) => {
-  res.send("Ok");
+    res.send("Ok");
 });
-//UTILITY FUNCtion
 
+//UTILITY FUNCtion
 app.listen(process.env.PORT || 8080, (e) => {
     console.log(`listening on cloud API port 7000`);
 });
 
-
 function halfMyCacheMap() {
     if (myCacheMap.size > 3000000) {
         let cnt = 0;
-        //Can also Implement it
-        // myCacheMap.clear();
         for (const [key, value] of myCacheMap.entries()) {
             myMap.delete(key);
             cnt++;
@@ -255,7 +181,8 @@ function halfMyCacheMap() {
         }
     }
 }
-function insertInMem(link,url){
+
+function insertInMem(link, url) {
     halfMyCacheMap();
     myCacheMap.set(link, url);
 }
