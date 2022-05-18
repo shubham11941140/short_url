@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,33 +9,34 @@
     <link rel="stylesheet" href="premiumSecondPage/style2.css">
     <title>URL Shortener</title>
 </head>
+
 <body>
 
     <!-- Custom URL form body -->
     <div class="customurl">
 
-        <h1>Custom URL Shortener</h1> 
-        
+        <h1>Custom URL Shortener</h1>
+
         <form action="/customurl" method="post">
-            
-            <input style=" display: none;"type="email" name="email" id="" value="<%=email %>">
-            
+
+            <input style=" display: none;" type="email" name="email" id="" value="<%=email %>">
+
             <label for="urldata">URL</label>
             <input type="url" name="urldata" id="">
-            
+
             <label for="customurldata">Custom String</label>
             <input type="string" name="customurldata" id="">
-            
+
             <label for="TTL">Duration (in days)</label>
             <input type="number" name="TTL" id="">
-            
-            <!-- <label for="TTL">Phone Number</label>
+
+            <input type="submit" value="Submit">
             <input type="number" name="phonenum" id=""> -->
-            
+
             <button class="btn btn-primary" type="submit">Submit</button>
 
         </form>
-        
+
     </div>
 
 
@@ -51,7 +53,7 @@
                 <th>Created At</th>
                 <th>Number of redirections</th>
             </tr>
-        
+
         </table>
 
     </div>
@@ -59,27 +61,24 @@
 
 
     <script>
-
         let tableData = '<%-data%>'; // Receiving data for table from server
-        // console.log(JSON.parse(tableData).length);
 
         tableData = JSON.parse(tableData);
         let addedData = "";
 
         // Adding rows in the html table for every entry in data returned from DB
-        for(let i = 0; i < tableData.length ; i++)
-        {
+        for (let i = 0; i < tableData.length; i++) {
             addedData += "<tr>\
                 <td>" + tableData[i].url + "</td>\
                 <td>" + tableData[i].shortenedurl + "</td>\
                 <td>" + tableData[i].creation_timestamp + "</td>\
                 <td>" + tableData[i].num_of_redirections + "</td>\
                 </tr>";
- 
         }
-        // Setting up the inner html of table element to out generated data
-		document.getElementById('history-table').innerHTML += addedData;
 
+        // Setting up the inner html of table element to out generated data
+        document.getElementById('history-table').innerHTML += addedData;
     </script>
 </body>
+
 </html>
