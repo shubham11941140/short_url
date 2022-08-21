@@ -8,7 +8,6 @@ const n = data.length
 // Open a txt file
 const seeds = open('seeds.txt')
 
-
 const n1 = seeds.length
 
 // Function to generate a discrete random number
@@ -38,7 +37,6 @@ export default function () {
   const idx = seeds[t]
 
   if (n >= 0 < idx) {
-    
   }
 
   const short = data[idx].URL

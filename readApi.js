@@ -28,10 +28,8 @@ const con = mysql.createConnection({
 
 con.connect(function (err) {
   if (err) {
-    
     throw err
   }
-  
 })
 
 // Redis DB
@@ -40,9 +38,7 @@ const redis = new Redis({
   port: 6379
 })
 
-redis.on('connect', () => {
-  
-})
+redis.on('connect', () => {})
 
 // Read Normal Short URL
 app.post('/api/readshorten/:apiKey', async function (req, res) {
@@ -66,17 +62,14 @@ app.post('/api/readshorten/:apiKey', async function (req, res) {
 
   redis.get(link, (err, reply) => {
     if (err) {
-      
     }
     if (reply !== null) {
       res.json({ longURL: reply })
-      
 
       // Update redirection count
       const sqlupdate = `UPDATE urlMap SET num_of_redirections = num_of_redirections + 1 where  shortenedurl = "${link}";`
       const query = con.query(sqlupdate, data, (err, result) => {
         if (err) {
-          
         }
       })
     } else {
@@ -109,9 +102,7 @@ app.post('/api/readshorten/:apiKey', async function (req, res) {
 })
 
 // UTILITY FUNCtion
-app.listen(7000, (e) => {
-  
-})
+app.listen(7000, (e) => {})
 
 /**
  * Function to generate the random string of 11 characters from a set of preselected 62 characters
