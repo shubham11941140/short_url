@@ -28,10 +28,8 @@ const con = mysql.createConnection({
 
 con.connect(function (err) {
   if (err) {
-    console.log('Error in Mysql Databse connection')
     throw err
   }
-  console.log('Connected Databse!')
 })
 
 const redis = new Redis.Cluster([
@@ -49,9 +47,7 @@ const redis = new Redis.Cluster([
   }
 ])
 
-redis.on('connect', () => {
-  console.log('Redis Connected')
-})
+redis.on('connect', () => {})
 
 // Create Short URL
 app.post('/api/createshorten/:apiKey', async function (req, res) {
@@ -147,7 +143,7 @@ app.post('/api/createcustomshorten/:apiKey', async function (req, res) {
   con.query(sqlsearch, datasearch, (err, result) => {
     if (err) {
       res.send('Something Went Wrong... Try Again...')
-      console.log(err)
+
       return
     }
 
@@ -158,7 +154,7 @@ app.post('/api/createcustomshorten/:apiKey', async function (req, res) {
       const query = con.query(sqlinsert, datainsert, (err, result) => {
         if (err) {
           res.send('Something Went Wrong... Try Again...')
-          console.log(err)
+
           return
         }
         data = ' '
@@ -192,17 +188,14 @@ app.post('/api/readshorten/:apiKey', async function (req, res) {
 
   redis.get(link, (err, reply) => {
     if (err) {
-      console.log(err)
     }
     if (reply !== null) {
       res.json({ longURL: reply })
-      console.log('Hit from cache')
 
       // Update redirection count
       const sqlupdate = `UPDATE urlMap SET num_of_redirections = num_of_redirections + 1 where  shortenedurl = "${link}";`
       const query = con.query(sqlupdate, data, (err, result) => {
         if (err) {
-          console.log('Increment failed in redirection counts')
         }
       })
     } else {
@@ -250,10 +243,8 @@ app.post('/api/deleteurl/:apiKey', async function (req, res) {
   const dataapi = ' '
   con.query(sqlapi, dataapi, (err, result) => {
     if (err) {
-      console.log('Something Went Wrong... Try Again...')
       res.send('Please Try again')
     } else if (result.length == 0) {
-      console.log('API Key Invalid')
       res.send('API key not valid')
     } else {
       Email = result[0].email
@@ -309,9 +300,7 @@ app.post('/api/deleteurl/:apiKey', async function (req, res) {
 })
 
 // UTILITY FUNCtion
-app.listen(7000, (e) => {
-  console.log('listening on cloud API port 7000')
-})
+app.listen(7000, (e) => {})
 
 /**
  * Function to generate the random string of 11 characters from a set of preselected 62 characters
@@ -340,11 +329,9 @@ async function validateAPIkey (apiKey) {
   const data = ' '
   const query = con.query(sql, data, (err, result) => {
     if (err) {
-      console.log('Something Went Wrong... Try Again...')
       return 'F'
     }
     if (result.length == 0) {
-      console.log('API Key Invalid')
       return 'F'
     } else {
       return result[0].email
