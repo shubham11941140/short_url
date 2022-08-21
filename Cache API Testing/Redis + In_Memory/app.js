@@ -23,9 +23,7 @@ const redis = new Redis({
   port: 6379
 })
 
-redis.on('connect', () => {
-  
-})
+redis.on('connect', () => {})
 
 // Databases
 const con = mysql.createConnection({
@@ -37,10 +35,8 @@ const con = mysql.createConnection({
 
 con.connect(function (err) {
   if (err) {
-    
     throw err
   }
-  
 })
 
 // Create Custom Short URL
@@ -86,7 +82,7 @@ app.post('/api/createcustomshorten/:apiKey', async function (req, res) {
   con.query(sqlsearch, datasearch, (err, result) => {
     if (err) {
       res.send('Something Went Wrong... Try Again...')
-      
+
       return
     }
 
@@ -97,7 +93,7 @@ app.post('/api/createcustomshorten/:apiKey', async function (req, res) {
       const query = con.query(sqlinsert, datainsert, (err, result) => {
         if (err) {
           res.send('Something Went Wrong... Try Again...')
-          
+
           return
         }
         data = ' '
@@ -131,7 +127,6 @@ app.post('/api/readshorten/:apiKey', async function (req, res) {
   } else {
     redis.get(link, (err, reply) => {
       if (err) {
-        
       }
       if (reply !== null) {
         res.json({ longURL: reply })
@@ -163,9 +158,7 @@ app.get('/:temp', (req, res) => {
 })
 
 // UTILITY FUNCtion
-app.listen(process.env.PORT || 8080, (e) => {
-  
-})
+app.listen(process.env.PORT || 8080, (e) => {})
 
 function halfMyCacheMap () {
   if (myCacheMap.size > 3000000) {
