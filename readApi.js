@@ -28,10 +28,10 @@ const con = mysql.createConnection({
 
 con.connect(function (err) {
   if (err) {
-    console.log('Error in Database connection')
+    
     throw err
   }
-  console.log('Connected Database!')
+  
 })
 
 // Redis DB
@@ -41,7 +41,7 @@ const redis = new Redis({
 })
 
 redis.on('connect', () => {
-  console.log('Redis Connected')
+  
 })
 
 // Read Normal Short URL
@@ -66,17 +66,17 @@ app.post('/api/readshorten/:apiKey', async function (req, res) {
 
   redis.get(link, (err, reply) => {
     if (err) {
-      console.log(err)
+      
     }
     if (reply !== null) {
       res.json({ longURL: reply })
-      console.log('Hit from cache')
+      
 
       // Update redirection count
       const sqlupdate = `UPDATE urlMap SET num_of_redirections = num_of_redirections + 1 where  shortenedurl = "${link}";`
       const query = con.query(sqlupdate, data, (err, result) => {
         if (err) {
-          console.log('Increment failed in redirection counts')
+          
         }
       })
     } else {
@@ -110,7 +110,7 @@ app.post('/api/readshorten/:apiKey', async function (req, res) {
 
 // UTILITY FUNCtion
 app.listen(7000, (e) => {
-  console.log('listening on cloud API port 7000')
+  
 })
 
 /**

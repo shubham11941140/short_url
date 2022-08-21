@@ -7,7 +7,7 @@ const n = data.length
 
 // Open a txt file
 const seeds = open('seeds.txt')
-console.log('Generating random seeds')
+
 
 const n1 = seeds.length
 
@@ -38,7 +38,7 @@ export default function () {
   const idx = seeds[t]
 
   if (n >= 0 < idx) {
-    console.log('Error')
+    
   }
 
   const short = data[idx].URL
