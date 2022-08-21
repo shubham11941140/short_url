@@ -23,9 +23,7 @@ const redis = new Redis({
   port: 6379
 })
 
-redis.on('connect', () => {
-  
-})
+redis.on('connect', () => {})
 
 // Databases
 const con = mysql.createConnection({
@@ -37,10 +35,8 @@ const con = mysql.createConnection({
 
 con.connect(function (err) {
   if (err) {
-    
     throw err
   }
-  
 })
 
 app.get('/home', (req, res) => {
@@ -90,7 +86,7 @@ app.post('/api/createcustomshorten/:apiKey', async function (req, res) {
   con.query(sqlsearch, datasearch, (err, result) => {
     if (err) {
       res.send('Something Went Wrong... Try Again...')
-      
+
       return
     }
 
@@ -101,7 +97,7 @@ app.post('/api/createcustomshorten/:apiKey', async function (req, res) {
       const query = con.query(sqlinsert, datainsert, (err, result) => {
         if (err) {
           res.send('Something Went Wrong... Try Again...')
-          
+
           return
         }
         data = ' '
@@ -132,7 +128,6 @@ app.post('/api/readshorten/:apiKey', async function (req, res) {
 
   redis.get(link, (err, reply) => {
     if (err) {
-      
     }
     if (reply !== null) {
       res.json({ longURL: reply })
@@ -157,6 +152,4 @@ app.post('/api/readshorten/:apiKey', async function (req, res) {
 })
 
 // UTILITY FUNCtion
-app.listen(process.env.PORT || 8080, (e) => {
-  
-})
+app.listen(process.env.PORT || 8080, (e) => {})
